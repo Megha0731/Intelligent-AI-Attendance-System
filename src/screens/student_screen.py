@@ -1,3 +1,7 @@
 import streamlit as st
-def student_screen():
-    st.header("student screen")
+from src.components.header import header_dashboard
+from src.components.footer import footer_dashboard
+from src.database.db import check_teacher_exits, create_teacher, teacher_login
+
+
+

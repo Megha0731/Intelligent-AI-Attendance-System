@@ -3,7 +3,7 @@ import streamlit as st
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from src.database.db import check_teacher_exits,create_teacher
+from src.database.db import check_teacher_exits, create_teacher, teacher_login
 import numpy as np
 from datetime import datetime
 import pandas as pd
@@ -16,25 +16,35 @@ def teacher_screen():
 
     if "teacher_data" in st.session_state:
         teacher_dashboard()
-    elif 'teacher_login_type' not in st.session_state or st.session_state.teacher_login_type=="login":
+
+    elif 'teacher_login_type' not in st.session_state or st.session_state.teacher_login_type == "login":
         teacher_screen_login()
+
     elif st.session_state.teacher_login_type == "register":
         teacher_screen_register()
 
 
 def teacher_dashboard():
+
     teacher_data = st.session_state.teacher_data
 
+    # 🔥 ONLY FIX (prevents crash)
+    if not isinstance(teacher_data, dict):
+        st.error("Session error. Please login again.")
+        st.stop()
+
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
+
     with c1:
         header_dashboard()
+
     with c2:
         st.subheader(f"""Welcome, {teacher_data['name']} """)
-        
+
         # 🔥 FIX: unique key
         if st.button("Logout", type='secondary', key='logout_btn', shortcut="control+backspace"):
             st.session_state['is_logged_in'] = False
-            del st.session_state.teacher_data 
+            del st.session_state.teacher_data
             st.rerun()
 
     st.space()
@@ -66,33 +76,36 @@ def teacher_dashboard():
     footer_dashboard()
 
 
-# 🔥 FIX: recursion removed
+# 🔥 FIXED LOGIN FLOW (kept same logic, only safer)
 def login_teacher(username, password):
+
     if not username or not password:
         return False
-    
-    # yaha actual DB logic aayega
-    if username == "admin" and password == "1234":
-        return {"name": "Admin"}
-    
+
+    teacher = teacher_login(username, password)
+
+    if teacher:
+        st.session_state.user_role = 'teacher'
+        st.session_state.teacher_data = teacher
+        st.session_state.is_logged_in = True
+        return True
+
     return False
 
 
 def teacher_screen_login():
+
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
 
     with c1:
         header_dashboard()
 
     with c2:
-        # 🔥 FIX: unique key
         if st.button("Go back to Home", type='secondary', key='login_back_btn', shortcut="control+backspace"):
             st.session_state['login_type'] = None
             st.rerun()
 
     st.header('Login using password', text_alignment='center')
-    st.space()
-    st.space()
 
     teacher_username = st.text_input("Enter username", placeholder='ananyaroy')
     teacher_pass = st.text_input("Enter password", type='password', placeholder="Enter password")
@@ -106,8 +119,7 @@ def teacher_screen_login():
             teacher = login_teacher(teacher_username, teacher_pass)
 
             if teacher:
-                st.session_state.user_role ='teacher'
-                st.session_state.teacher_data = teacher
+                st.session_state.user_role = 'teacher'
                 st.session_state.is_logged_in = True
 
                 st.toast("welcome back!", icon="👋")
@@ -123,51 +135,43 @@ def teacher_screen_login():
 
     footer_dashboard()
 
+
 def register_teacher(teacher_username, teacher_name, teacher_pass, teacher_pass_confirm):
+
     if not teacher_username or not teacher_name or not teacher_pass:
-        return False,"All fields are required"
+        return False, "All fields are required"
 
     if check_teacher_exits(teacher_username):
-        return False,"Teacher orleady Taken"
-    
-    if teacher_pass!=teacher_pass_confirm:
-        return False,"Passward doesn't match"
-    
+        return False, "Teacher already taken"
+
+    if teacher_pass != teacher_pass_confirm:
+        return False, "Password doesn't match"
+
     try:
-        create_teacher(teacher_username,teacher_pass,teacher_name)
-        return True,"Successfully Created! Login Now"
+        create_teacher(teacher_username, teacher_pass, teacher_name)
+        return True, "Successfully Created! Login Now"
     except Exception as e:
-        return False,str(e)
-
-
-
-
+        return False, str(e)
 
 
 def teacher_screen_register():
+
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
+
     with c1:
         header_dashboard()
+
     with c2:
         if st.button("Go back to Home", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
             st.session_state['login_type'] = None
             st.rerun()
 
-
-
     st.header('Register your teacher profile')
 
-    st.space()
-    st.space()
-
-    
     teacher_username = st.text_input("Enter username", placeholder='ananyaroy')
-
     teacher_name = st.text_input("Enter name", placeholder='Ananya Roy')
-
-    teacher_pass = st.text_input("Enter password", type='password', placeholder="Enter password")
-
-    teacher_pass_confirm = st.text_input("Confirm your password", type='password', placeholder="Enter password")
+    teacher_pass = st.text_input("Enter password", type='password')
+    teacher_pass_confirm = st.text_input("Confirm your password", type='password')
 
     st.divider()
 
@@ -175,7 +179,13 @@ def teacher_screen_register():
 
     with btnc1:
         if st.button('Register now', icon=':material/passkey:', shortcut='control+enter', width='stretch'):
-            success, message = register_teacher(teacher_username, teacher_name, teacher_pass, teacher_pass_confirm)
+            success, message = register_teacher(
+                teacher_username,
+                teacher_name,
+                teacher_pass,
+                teacher_pass_confirm
+            )
+
             if success:
                 st.success(message)
                 import time
@@ -184,7 +194,6 @@ def teacher_screen_register():
                 st.rerun()
             else:
                 st.error(message)
-
 
     with btnc2:
         if st.button('Login Instead', type="primary", icon=':material/passkey:', width='stretch'):
