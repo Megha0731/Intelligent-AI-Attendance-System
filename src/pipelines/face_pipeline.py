@@ -9,22 +9,22 @@ import streamlit as st
 from src.database.db import get_all_students
 
 
-@st.cache_resource #only one time 
+@st.cache_resource
 def load_dlib_models():
-    detector = dlib.get_frontal_face_detector() #detect fac ein image
+    detector = dlib.get_frontal_face_detector() 
 
 
-    sp = dlib.shape_predictor(  #face shape detect
+    sp = dlib.shape_predictor(
         face_recognition_models.pose_predictor_model_location()
     )
 
-    facerec = dlib.face_recognition_model_v1( #face recognise
+    facerec = dlib.face_recognition_model_v1(
         face_recognition_models.face_recognition_model_location()
     )
 
     return detector, sp, facerec
 
-def get_face_embeddings(image_np):#change face in embedding
+def get_face_embeddings(image_np):
     detector, sp, facerec = load_dlib_models()
     faces = detector(image_np, 1)
 
@@ -68,7 +68,7 @@ def get_trained_model():
 
 
 def train_classifier():
-    st.cache_resource.clear()#when student is new
+    st.cache_resource.clear()
     model_data = get_trained_model()
     return bool(model_data)
 
@@ -99,7 +99,7 @@ def predict_attendance(class_image_np):
 
         best_match_score = np.linalg.norm(student_embedding - encoding)
 
-        resemblance_threshold = 0.6
+        resemblance_threshold = 0.4
 
         if best_match_score <= resemblance_threshold:
             detected_student[predicted_id] = True
