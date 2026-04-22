@@ -1,7 +1,7 @@
 import streamlit as st
 
-import segno
-import io
+import segno #for QR Handling
+import io#binary handling
 
 
 @st.dialog("Share Class Link")
