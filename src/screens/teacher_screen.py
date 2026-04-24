@@ -17,7 +17,7 @@ import numpy as np
 from datetime import datetime
 
 import pandas as pd
-
+from src.database.db import create_attendance
 from src.database.config import supabase
 
 
@@ -185,7 +185,7 @@ def teacher_tab_take_attendance():
                         })
 
                 attendance_result_dialog(pd.DataFrame(results), attendance_to_log)
-
+                
     with c3:
         if st.button('Use Voice Attendance', type='primary', width='stretch', icon=':material/mic:'):
             voice_attendance_dialog(selected_subject_id)
