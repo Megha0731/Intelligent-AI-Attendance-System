@@ -102,7 +102,7 @@ def teacher_tab_take_attendance():
     subjects = get_teacher_subjects(teacher_id)
 
     if not subjects:
-        st.warning('You havent created any subjects yet! Please create one to begin!')
+        st.warning('You have not created any subjects yet! Please create one to begin!')
         return
     
     subject_options = {f"{s['name']} - {s['subject_code']}": s['subject_id'] for s in subjects}
@@ -370,9 +370,9 @@ def teacher_screen_register():
     st.space()
 
     
-    teacher_username = st.text_input("Enter username", placeholder='ananyaroy')
+    teacher_username = st.text_input("Enter username", placeholder='Abhishekpatel')
 
-    teacher_name = st.text_input("Enter name", placeholder='Ananya Roy')
+    teacher_name = st.text_input("Enter name", placeholder='Abhishek Patel')
 
     teacher_pass = st.text_input("Enter password", type='password', placeholder="Enter password")
 

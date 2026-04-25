@@ -40,7 +40,6 @@ def style_background_dashboard():
     
 
 def style_base_layout():
-# asdasd
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979&display=swap');
@@ -57,12 +56,9 @@ def style_base_layout():
                 padding-top:1.5rem !important;    
             }
 
-            h1 {
-                font-family: 'Climate Crisis', sans-serif !important;
-                font-size: 3.5rem !important;
-                line-height:1.1 1important;
-                margin-bottom:0rem !important;
-            }
+            h1 { font-family: 'Climate Crisis', sans-serif !important;
+                 font-size: 3.5rem !important; line-height:1.1 !important;
+                 margin-bottom:0rem !important; }
                 
 
             h2 {
@@ -75,6 +71,7 @@ def style_base_layout():
             h3, h4, p {
                 font-family: 'Outfit', sans-serif;    
             }
+            
                 
 
             button{

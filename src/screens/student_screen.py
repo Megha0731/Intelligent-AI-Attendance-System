@@ -69,7 +69,7 @@ def student_dashboard():
         def unenroll_button():
             if st.button(
             "Unenroll from this course",
-            key=f"unenroll_{sid}",   # ✅ UNIQUE KEY
+            key=f"unenroll_{sid}",   #UNIQUE KEY
             type='tertiary',
             width='stretch',
             icon=':material/delete_forever:'
@@ -87,8 +87,8 @@ def student_dashboard():
                 code =sub['subject_code'],
                 section = sub['section'],
                 stats = [
-                    ('📅', 'Total', stats['total']),
-                    ('✅', 'Attended', stats['attended']),
+                    ('📅', 'Total', stats.get('total', 0)),
+                    ('✅', 'Attended',stats.get('attended', 0)),
                 ],
                 footer_callback=unenroll_button
             )
@@ -153,13 +153,13 @@ def student_screen():
             new_name = st.text_input("Enter your name", placeholder='E.g. Hamza Rizvi')
 
             st.subheader('Optional : Voice Enrollment')
-            st.info("Enroll your for voice only attendance")
+            st.info("Enroll your voice for only attendance")
 
 
             audio_data = None
 
             try:
-                audio_data = st.audio_input('Record a short phrase like I am present, My name is Akash.')
+                audio_data = st.audio_input('Record a short phrase like I am present, My name is Megha,I am from Indore etc.')
             except Exception:
                 st.error('Audio Data failed!')
 
@@ -186,7 +186,7 @@ def student_screen():
                                 time.sleep(1)
                                 st.rerun()
                         else:
-                            st.error('Couldnt capture your facial features for registration')
+                            st.error('Could not capture your facial features for registration')
 
                 else:
                     st.warning('Please enter your name!')

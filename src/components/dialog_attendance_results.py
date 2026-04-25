@@ -27,9 +27,7 @@ def show_attendance_result(df, logs):
                 st.session_state.voice_attendance_results = None
                 st.rerun()
             except Exception as e:
-                st.error(f"Sync failed: {e}")
-                st.write("DEBUG ERROR:", e)
-
+                st.error('Sync failed!')
 
 
 @st.dialog("Attendance Reports")
